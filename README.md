@@ -1,2 +1,5 @@
-# SOCIOPHYSICS II: Modelling the platform
+# SOCIOPHYSICS II
+## Modelling
+
+## Simulation
 
