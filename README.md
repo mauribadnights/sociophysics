@@ -1,5 +1,0 @@
-# SOCIOPHYSICS II
-## Modelling
-
-## Simulation
-
