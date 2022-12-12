@@ -10,7 +10,7 @@ To get started, you will need to install the following dependencies:
 3. Matplotlib: a library for creating visualizations of data
 4. Seaborn: a library for creating more advanced visualizations
 
-Once you have installed the dependencies, you can run the code in the main.py file to perform the analysis and simulation. The code will load the data from the pedestrian_data.csv file and perform the following steps:
+Once you have installed the dependencies, you can run the code in the matrix_generator.ipynb file in the matrix_generator folder to perform the analysis and then run the simulator.ipynb in the simulator folder to start the simulation. The code will load the data from the pedestrian_data.csv file and perform the following steps:
 
 1. Explore the data and visualize the distribution of pedestrian movement across the platform.
 2. Fit the three different Markov chains to the data and compare the results.
