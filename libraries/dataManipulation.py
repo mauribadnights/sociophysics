@@ -63,3 +63,22 @@ def getTime(from_datetime, to_datetime, station):
     timedf = timedf[timedf['date_time_utc'] >= from_datetime]
     timedf = timedf[timedf['date_time_utc'] <= to_datetime]
     return timedf
+
+
+def direction_label(data):
+    uniques = data.tracked_object.unique()
+    direction = {}
+    for object in range(len(uniques)):
+        object_number = uniques[object]
+        first_appearance_index = data[data['tracked_object']==object_number].index[0]
+        last_appearance_index = data[data['tracked_object']==object_number].index[-1]
+        start_coordinate = data.iloc[first_appearance_index]['x_pos']
+        end_coordinate = data.iloc[last_appearance_index]['x_pos']
+        x_displacement = end_coordinate - start_coordinate
+        if x_displacement > 0:
+            direction[object_number] = 'onboarding'
+        elif x_displacement < 0:
+            direction[object_number] = 'offboarding'
+        else:
+            direction[object_number] = 'undefined'
+    return direction
