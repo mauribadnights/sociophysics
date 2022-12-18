@@ -66,19 +66,21 @@ def getTime(from_datetime, to_datetime, station):
 
 
 def direction_label(data):
-    uniques = data.tracked_object.unique()
-    direction = {}
-    for object in range(len(uniques)):
-        object_number = uniques[object]
-        first_appearance_index = data[data['tracked_object']==object_number].index[0]
-        last_appearance_index = data[data['tracked_object']==object_number].index[-1]
-        start_coordinate = data.iloc[first_appearance_index]['x_pos']
-        end_coordinate = data.iloc[last_appearance_index]['x_pos']
+    def compute_direction(group):
+        first_appearance_index = group.index[0]
+        last_appearance_index = group.index[-1]
+        start_coordinate = group.loc[first_appearance_index]['x_pos']
+        end_coordinate = group.loc[last_appearance_index]['x_pos']
         x_displacement = end_coordinate - start_coordinate
         if x_displacement > 0:
-            direction[object_number] = 'onboarding'
+            return 'onboarding'
         elif x_displacement < 0:
-            direction[object_number] = 'offboarding'
+            return 'offboarding'
         else:
-            direction[object_number] = 'undefined'
-    return direction
+            return 'undefined'
+    result_series = data.groupby('tracked_object').apply(compute_direction)
+    result_df = result_series.to_frame()
+    result_df.columns = ['direction']
+    result_df = result_df.reset_index()
+    return result_df
+
