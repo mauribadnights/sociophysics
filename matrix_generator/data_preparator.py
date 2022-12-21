@@ -51,3 +51,8 @@ def division_by_train_presence(data_on):
     data_on_no_train = data_on_no_train.drop('train',axis=1)
 
     return(data_on_train, data_on_no_train)
+
+def data_division(data):
+    (data_on, data_off) = division_by_direction(data)
+    (data_on_train, data_on_no_train) = division_by_train_presence(data_on)
+    return ((data_on_train, data_on_no_train), data_off)
