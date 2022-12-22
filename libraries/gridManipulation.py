@@ -3,6 +3,7 @@ import datetime
 import matplotlib.patches as patches
 import math
 from sociophysicsDataHandler import SociophysicsDataHandler
+import numpy as np
 
 dh = SociophysicsDataHandler()
 def getPic(station):
@@ -78,22 +79,15 @@ def point_in_patch(point, patch):
     else:
         return False
 
-def point_patch(origin, size, point, angle):
+def point_patch(origin, size, point):
     o_x = origin[0]
     o_y = origin[1]
     width = size[0]
     height = size[1]
     point_x = point[0]
     point_y = point[1]
-    
-    grid_angle_rad = angle*math.pi/180
-    cos = math.cos(grid_angle_rad)
-    sin = math.sin(grid_angle_rad)
 
-    rotated_x = (point_x*cos)-(point_y*sin)
-    rotated_y = (point_x*sin)+(point_y*cos)
-
-    i = math.floor((rotated_x-o_x)/width)
-    j = math.floor((rotated_y-o_y)/height)
+    i = math.floor((point_x-o_x)/width)
+    j = math.floor((point_y-o_y)/height)
 
     return(i,j)
