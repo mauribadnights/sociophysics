@@ -1,3 +1,6 @@
+print('Installing libraries')
+libraries_required = ['sys', 'numpy', 'time', 'csv', 'os', 'shutil', 'pyfiglet']
+
 print('Importing neccesary libraries...')
 import sys
 sys.path.append('../')
@@ -5,7 +8,6 @@ from libraries.dataManipulation import *
 from libraries.gridManipulation import *
 from data_preparator import *
 import numpy as np
-from collections import Counter
 import time
 import csv
 import os
@@ -21,7 +23,8 @@ days_to_analyze = [20220314, 20220315, 20220316, 20220317, 20220318,
 
 result_relative_paths = ['results/onboarding_no_train/', 'results/onboarding_top/', 'results/onboarding_bottom/', 'results/onboarding_both/', 'results/offboarding/']
 
-start_title = pyfiglet.figlet_format("MATRIX GENERATOR")
+start_title = pyfiglet.figlet_format("TRANSITION MATRIX GENERATOR")
+finish_message = pyfiglet.figlet_format("DONE!")
 print(start_title)
 
 print('Declaring grid configuration:')
@@ -39,24 +42,24 @@ total_patches = (67,14)
 abs_total_patches = total_patches[0]*total_patches[1]
 
 grid_angle = 0
-print('Grid will have ' + 
-      str(total_patches[0]) + 
-      ' zones along the x axis and ' + 
+print('Grid will have ' +
+      str(total_patches[0]) +
+      ' zones along the x axis and ' +
       str(total_patches[1]) +
       ' zones along the y axis, making a total of ' +
       str(abs_total_patches) +
       ' patches.'
       )
 
-print('Each patch will have the following dimensions: ' + 
-      str(patch_width) + 
+print('Each patch will have the following dimensions: ' +
+      str(patch_width) +
       'x' +
       str(patch_height)
       )
 
 print('The angle of the grid is ' + str(grid_angle) + ' degrees.')
 
-print('Grid starts in coordinates: ' + 
+print('Grid starts in coordinates: ' +
       str(o_x) + 'x' + str(o_y))
 
 #GRID IS CREATED USING CONFIG
@@ -137,7 +140,7 @@ def make_matrix(data, path):
         writer.writerows(markov_matrix)
     f.close()
 
-    
+
 def analize_day(day_to_analyze):
     day_analysis_start = time.time()
     print('Analyzing day ' + str(day_to_analyze) + '...')
@@ -176,9 +179,9 @@ def average_matrix(path):
     else:
         relative_path = path
     matrices_dir = curr_dir + relative_path
-    
+
     shutil.rmtree(matrices_dir+'/.ipynb_checkpoints', ignore_errors=True)
-    
+
     average_matrix = [[-1]]
 
     for fileName in os.listdir(matrices_dir):
@@ -195,7 +198,7 @@ def average_matrix(path):
     with open(matrices_dir+"/average.csv", "w+") as my_csv:
         csvWriter = csv.writer(my_csv, delimiter=',')
         csvWriter.writerows(average_matrix)
- 
+
 print('Welcome to the transition matrix generator. Enter a command to start an analysis (use command h for help on commands).')
 exit = 0
 while exit==0:
@@ -206,20 +209,25 @@ while exit==0:
         case 'list':
             for day in days_to_analyze:
                 analize_day(day)
+            print(finish_message)
         case 'day':
             day = input('What day would you like to analyze? (Input must have shape yyyymmdd): ')
             analize_day(day)
+            print(finish_message)
         case 'avg':
             average_matrix(0)
+            print(finish_message)
         case 'avgcomplete':
             for path in result_relative_paths:
                 average_matrix(path)
+            print(finish_message)
         case 'range':
             init_date = input('What date do you want the analysis to start at? (Value must have shape yyyymmdd): ')
             end_date = input('What date do you want the analysis to start at? (Value must have shape yyyymmdd and be in the same month that the start date): ')
             day_range = range(int(init_date),int(end_date)+1)
             for day in day_range:
                 analize_day(day)
+            print(finish_message)
         case 'rangecomplete':
             init_date = input('What date do you want the analysis to start at? (Value must have shape yyyymmdd): ')
             end_date = input('What date do you want the analysis to start at? (Value must have shape yyyymmdd and be in the same month that the start date): ')
@@ -228,11 +236,13 @@ while exit==0:
                 analize_day(day)
             for path in result_relative_paths:
                 average_matrix(path)
+            print(finish_message)
         case 'complete':
             for day in days_to_analyze:
                 analize_day(day)
             for path in result_relative_paths:
                 average_matrix(path)
+            print(finish_message)
         case 'h':
             print('List of commands:')
             print('    - "q": quit program')
