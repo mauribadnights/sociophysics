@@ -3,6 +3,7 @@ import datetime
 import matplotlib.patches as patches
 import math
 from sociophysicsDataHandler import SociophysicsDataHandler
+import numpy as np
 
 dh = SociophysicsDataHandler()
 def getPic(station):
