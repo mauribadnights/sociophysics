@@ -23,6 +23,8 @@ days_to_analyze = [20220314, 20220315, 20220316, 20220317, 20220318,
 
 result_relative_paths = ['results/onboarding_no_train/', 'results/onboarding_top/', 'results/onboarding_bottom/', 'results/onboarding_both/', 'results/offboarding/']
 
+result_relative_paths_extra_bar = ['/results/onboarding_no_train/', '/results/onboarding_top/', '/results/onboarding_bottom/', '/results/onboarding_both/', '/results/offboarding/']
+
 start_title = pyfiglet.figlet_format("TRANSITION MATRIX GENERATOR")
 finish_message = pyfiglet.figlet_format("DONE!")
 print(start_title)
@@ -218,7 +220,7 @@ while exit==0:
             average_matrix(0)
             print(finish_message)
         case 'avgcomplete':
-            for path in result_relative_paths:
+            for path in result_relative_paths_extra_bar:
                 average_matrix(path)
             print(finish_message)
         case 'range':
@@ -234,13 +236,13 @@ while exit==0:
             day_range = range(int(init_date),int(end_date)+1)
             for day in day_range:
                 analize_day(day)
-            for path in result_relative_paths:
+            for path in result_relative_paths_extra_bar:
                 average_matrix(path)
             print(finish_message)
         case 'complete':
             for day in days_to_analyze:
                 analize_day(day)
-            for path in result_relative_paths:
+            for path in result_relative_paths_extra_bar:
                 average_matrix(path)
             print(finish_message)
         case 'h':
