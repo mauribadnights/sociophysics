@@ -23,6 +23,8 @@ days_to_analyze = [20220314, 20220315, 20220316, 20220317, 20220318,
 
 result_relative_paths = ['results/onboarding_no_train/', 'results/onboarding_top/', 'results/onboarding_bottom/', 'results/onboarding_both/', 'results/offboarding/']
 
+clean_export_paths_and_names = ['clean_results/onboarding_no_train.csv', 'clean_results/onboarding_top.csv', 'clean_results/onboarding_bottom.csv', 'clean_results/onboarding_both.csv', 'clean_results/offboarding.csv']
+
 result_relative_paths_extra_bar = ['/results/onboarding_no_train/', '/results/onboarding_top/', '/results/onboarding_bottom/', '/results/onboarding_both/', '/results/offboarding/']
 
 start_title = pyfiglet.figlet_format("TRANSITION MATRIX GENERATOR")
@@ -68,6 +70,36 @@ print('Grid starts in coordinates: ' +
 print('Creating grid...')
 grid = create_grid(o, patch_size, total_patches, grid_angle)
 print('grid succesfully created')
+
+print('Loading row normalizer...')
+def scale_rows(arr):
+    # Check if rows are all zeros
+    all_zero_rows = np.all(arr == 0, axis=1)
+    # avoid division by zero
+    row_sums = arr.sum(axis=1, keepdims=True)
+    row_sums[row_sums == 0] = 1
+    arr = np.where(all_zero_rows[:, np.newaxis], arr, np.true_divide(arr, row_sums))
+    # replace nan with zero
+    arr = np.nan_to_num(arr)
+    return arr
+print('Normalizer loaded.')
+
+print('Loading zones where dissapearance is allowed...')
+dissapearing_zones = []
+for i in range(1,14): dissapearing_zones.append(i)
+for i in range(841,938): dissapearing_zones.append(i)
+for i in range(938):
+    if i%14 == 0 and dissapearing_zones.count(i) == 0:
+        dissapearing_zones.append(i)
+        if i<=30 and i>13:
+            dissapearing_zones.append(i+1)
+for i in range(938):
+    if i%14 == 13 and dissapearing_zones.count(i) == 0:
+        dissapearing_zones.append(i)
+        if i>(48*14): dissapearing_zones.append(i-1)
+print('Dissapearance zones loaded.')
+
+
 
 def make_matrix(data, path):
     def zone(x_pos, y_pos):
@@ -245,6 +277,23 @@ while exit==0:
             for path in result_relative_paths_extra_bar:
                 average_matrix(path)
             print(finish_message)
+        case 'cleancomplete':
+            for curr_matrix in range(len(clean_export_paths_and_names)):
+                input_matrix_path = result_relative_paths[curr_matrix]
+                full_path = input_matrix_path + 'average.csv'
+                transition_matrix = pd.read_csv(full_path, header=None)
+                transition_matrix = transition_matrix.to_numpy()
+                
+                for i in range(len(transition_matrix)):
+                    if dissapearing_zones.count(i) == 0:
+                        transition_matrix[i][-1] = 0
+                        
+                n_transition_matrix = scale_rows(transition_matrix)
+                with open(clean_export_paths_and_names[curr_matrix], "w+") as my_csv:
+                    csvWriter = csv.writer(my_csv, delimiter=',')
+                    csvWriter.writerows(n_transition_matrix)
+            print(finish_message)
+
         case 'h':
             print('List of commands:')
             print('    - "q": quit program')
@@ -255,6 +304,7 @@ while exit==0:
             print('    - "avgcomplete": compute average for all transition matrices in all result paths (results in 5 average matrices')
             print('    - "range": analyze all days within 2 specified dates (both included). Both dates must be in the same month.')
             print('    - "rangecomplete": analyze all days within 2 specified dates (both included) and compute average for all results. Both dates must be in the same month. This will result in 5 average transition matrices')
+            print('    - "cleancomplete": use computed average matrices and remove probability of dissapearing in a zone where dissapearance should not be possible. Result is exported as .csv file to /clean_results')
             print('Please note that this analysis can only be done for data in 2022, data from 2021 will result in wrong matrices.')
             print('For more information please check out the README file in GitHub. Enjoy the analysis!')
         case _:
